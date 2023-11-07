@@ -1,0 +1,72 @@
+-- Create the Borrower and Fine tables
+CREATE TABLE Borrower (
+  Name VARCHAR2(50),
+  Date_of_Issue DATE,
+  Name_of_Book VARCHAR2(50),
+  Status VARCHAR2(1)
+);
+
+CREATE TABLE Fine (
+  Name VARCHAR2(50),
+  Date DATE,
+  Amt NUMBER(10, 2)
+);
+
+-- PL/SQL block to calculate fines and handle exceptions
+DECLARE
+  v_borrower_name VARCHAR2(50) := 'John'; -- Replace with the borrower's name
+  v_date_of_issue DATE := TO_DATE('2023-10-10', 'YYYY-MM-DD'); -- Replace with the issue date
+  v_current_date DATE := SYSDATE;
+  v_fine_amt NUMBER(10, 2);
+  
+  v_min_fine NUMBER(10, 2) := 5;
+  v_max_fine NUMBER(10, 2) := 20;
+  v_days_late NUMBER;
+  
+  v_status VARCHAR2(1);
+  
+  -- Named exception handler
+  fine_exception EXCEPTION;
+  PRAGMA EXCEPTION_INIT(fine_exception, -20001);
+
+BEGIN
+  -- Get the status for the borrower
+  SELECT Status INTO v_status FROM Borrower WHERE Name = v_borrower_name;
+
+  -- Calculate the number of days late
+  v_days_late := v_current_date - v_date_of_issue;
+
+  -- Check the status and calculate fine accordingly
+  IF v_status = 'I' THEN
+    IF v_days_late BETWEEN 10 AND 20 THEN
+      v_fine_amt := v_min_fine + (v_days_late - 10) * v_min_fine;
+    ELSIF v_days_late > 20 THEN
+      v_fine_amt := v_max_fine + (v_days_late - 20) * v_max_fine;
+    ELSE
+      v_fine_amt := 0; -- No fine for up to 10 days late
+    END IF;
+
+    -- Insert fine details into the Fine table
+    INSERT INTO Fine (Name, Date, Amt)
+    VALUES (v_borrower_name, v_current_date, v_fine_amt);
+
+    -- Update borrower's status to 'R' after fine calculation
+    UPDATE Borrower
+    SET Status = 'R'
+    WHERE Name = v_borrower_name;
+
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('Fine calculated and updated for ' || v_borrower_name || ' (Rs ' || v_fine_amt || ')');
+  ELSE
+    -- If status is not 'I', raise an exception
+    RAISE_APPLICATION_ERROR(-20001, 'Borrower is not in issue status.');
+  END IF;
+
+EXCEPTION
+  WHEN fine_exception THEN
+    DBMS_OUTPUT.PUT_LINE('Exception: ' || SQLERRM);
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
