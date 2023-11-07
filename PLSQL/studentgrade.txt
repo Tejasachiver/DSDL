@@ -1,0 +1,73 @@
+-- Create the Stud_Marks table
+CREATE TABLE Stud_Marks (
+  Roll NUMBER,
+  Name VARCHAR2(50),
+  Total_Marks NUMBER
+);
+
+-- Create the Result table
+CREATE TABLE Result (
+  Roll NUMBER,
+  Name VARCHAR2(50),
+  Class VARCHAR2(20)
+);
+
+-- Create the Analysis table
+CREATE TABLE Analysis (
+  Class VARCHAR2(20),
+  Count NUMBER
+);
+
+
+CREATE OR REPLACE PROCEDURE proc_Grade(
+  p_roll NUMBER,
+  p_name VARCHAR2(50),
+  p_total_marks NUMBER
+) IS
+  v_class VARCHAR2(20);
+BEGIN
+  IF p_total_marks <= 1500 AND p_total_marks >= 990 THEN
+    v_class := 'Distinction';
+  ELSIF p_total_marks >= 900 THEN
+    v_class := 'First Class';
+  ELSIF p_total_marks >= 825 THEN
+    v_class := 'Higher Second Class';
+  ELSE
+    v_class := 'Pass Class';
+  END IF;
+
+  INSERT INTO Result (Roll, Name, Class)
+  VALUES (p_roll, p_name, v_class);
+END proc_Grade;
+/
+
+
+
+CREATE OR REPLACE PROCEDURE proc_Analysis IS
+BEGIN
+  INSERT INTO Analysis (Class, Count)
+  SELECT Class, COUNT(*)
+  FROM Result
+  GROUP BY Class;
+END proc_Analysis;
+/
+
+
+-- Insert data into Stud_Marks (replace with actual student data)
+INSERT INTO Stud_Marks (Roll, Name, Total_Marks) VALUES (1, 'Student1', 1200);
+INSERT INTO Stud_Marks (Roll, Name, Total_Marks) VALUES (2, 'Student2', 950);
+INSERT INTO Stud_Marks (Roll, Name, Total_Marks) VALUES (3, 'Student3', 850);
+INSERT INTO Stud_Marks (Roll, Name, Total_Marks) VALUES (4, 'Student4', 700);
+
+-- Process the data and calculate student classes
+BEGIN
+  FOR student IN (SELECT Roll, Name, Total_Marks FROM Stud_Marks) LOOP
+    proc_Grade(student.Roll, student.Name, student.Total_Marks);
+  END LOOP;
+
+  -- Update the analysis table
+  proc_Analysis;
+
+  COMMIT;
+END;
+/
