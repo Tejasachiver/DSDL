@@ -1,0 +1,46 @@
+﻿CREATE TABLE Physician (
+  reg_no INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  tel_no VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  PRIMARY KEY (reg_no)
+);
+
+CREATE TABLE Patient (
+  p_name VARCHAR(255) NOT NULL,
+  street VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  PRIMARY KEY (p_name)
+);
+
+CREATE TABLE Visit (
+  p_name VARCHAR(255) NOT NULL,
+  reg_no INT NOT NULL,
+  date_of_visit DATE NOT NULL,
+  fees INT NOT NULL,
+  FOREIGN KEY (p_name) REFERENCES Patient(p_name),
+  FOREIGN KEY (reg_no) REFERENCES Physician(reg_no)
+);
+
+
+INSERT INTO Physician (reg_no, name, tel_no, city) VALUES (1001, 'Dr. Alice Smith', '123-456-7890', 'New York');
+INSERT INTO Physician (reg_no, name, tel_no, city) VALUES (1002, 'Dr. Bob Jones', '987-654-3210', 'San Francisco');
+INSERT INTO Physician (reg_no, name, tel_no, city) VALUES (1003, 'Dr. Carol Williams', '456-789-0123', 'Los Angeles');
+
+INSERT INTO Patient (p_name, street, city) VALUES ('Alice', '123 Main Street', 'New York');
+INSERT INTO Patient (p_name, street, city) VALUES ('Bob', '456 Elm Street', 'San Francisco');
+INSERT INTO Patient (p_name, street, city) VALUES ('Carol', '789 Oak Street', 'Los Angeles');
+
+INSERT INTO Visit (p_name, reg_no, date_of_visit, fees) VALUES ('Alice', 1001, '2023-11-07', 100);
+INSERT INTO Visit (p_name, reg_no, date_of_visit, fees) VALUES ('Bob', 1002, '2023-11-08', 200);
+INSERT INTO Visit (p_name, reg_no, date_of_visit, fees) VALUES ('Carol', 1003, '2023-11-09', 300);
+
+1)DELETE FROM Visit WHERE p_name = 'Dipak'; 
+2)SELECT p_name, street, city FROM Patient WHERE city = 'Nashik'; 
+3)SELECT COUNT(*) AS num_of_physicians FROM Physician WHERE city = 'Mumbai'; 
+4)SELECT p_name FROM Patient ORDER BY p_name ASC; 
+5)SELECT p_name, fees FROM Visit WHERE fees > 5000; 
+6)SELECT p_name, city FROM Patient JOIN Visit ON Patient.p_name = Visit.p_name WHERE date_of_visit = '2017-07-13';
+7)SELECT physician.name, COUNT(*) AS num_of_patients FROM Physician JOIN Visit ON Physician.reg_no = Visit.reg_no GROUP BY physician.name ORDER BY num_of_patients DESC; 
+8)SELECT date_of_visit, SUM(fees) AS total_fees_collected FROM Visit GROUP BY date_of_visit ORDER BY date_of_visit ASC ;
+9)SELECT physician.name FROM Physician JOIN Visit ON Physician.reg_no = Visit.reg_no WHERE Visit.p_name = 'Mina'; 

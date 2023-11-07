@@ -1,0 +1,86 @@
+﻿CREATE TABLE account (
+  acc_no INT NOT NULL,
+  branch_name VARCHAR(255) NOT NULL,
+  balance DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (acc_no)
+);
+
+CREATE TABLE depositor (
+  cust_name VARCHAR(255) NOT NULL,
+  acc_no INT NOT NULL,
+  PRIMARY KEY (cust_name, acc_no),
+  FOREIGN KEY (acc_no) REFERENCES account(acc_no)
+);
+
+CREATE TABLE loan (
+  loan_no INT NOT NULL,
+  branch_name VARCHAR(255) NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (loan_no)
+);
+
+CREATE TABLE borrower (
+  cust_name VARCHAR(255) NOT NULL,
+  loan_no INT NOT NULL,
+  PRIMARY KEY (cust_name, loan_no),
+  FOREIGN KEY (loan_no) REFERENCES loan(loan_no)
+);
+
+
+
+INSERT INTO account (acc_no, branch_name, balance) VALUES (1, 'A', 1000.00);
+INSERT INTO account (acc_no, branch_name, balance) VALUES (2, 'B', 2000.00);
+INSERT INTO account (acc_no, branch_name, balance) VALUES (3, 'C', 3000.00);
+
+INSERT INTO depositor (cust_name, acc_no) VALUES ('Alice', 1);
+INSERT INTO depositor (cust_name, acc_no) VALUES ('Bob', 2);
+INSERT INTO depositor (cust_name, acc_no) VALUES ('Carol', 3);
+
+INSERT INTO loan (loan_no, branch_name, amount) VALUES (1, 'A', 10000.00);
+INSERT INTO loan (loan_no, branch_name, amount) VALUES (2, 'B', 20000.00);
+INSERT INTO loan (loan_no, branch_name, amount) VALUES (3, 'C', 30000.00);
+
+INSERT INTO borrower (cust_name, loan_no) VALUES ('Alice', 1);
+INSERT INTO borrower (cust_name, loan_no) VALUES ('Bob', 2);
+INSERT INTO borrower (cust_name, loan_no) VALUES ('Carol', 3);
+
+1)SELECT cust_name
+FROM borrower
+JOIN loan ON borrower.loan_no = loan.loan_no
+WHERE amount < 100000;
+
+2)SELECT acc_no, cust_name
+FROM depositor
+WHERE cust_name LIKE 'P%';
+
+3)SELECT acc_no, cust_name
+FROM depositor
+WHERE cust_name LIKE 'P%';
+
+4)SELECT cust_name
+FROM borrower
+JOIN loan ON borrower.loan_no = loan.loan_no
+WHERE branch_name = 'Redwood';
+
+5)SELECT cust_name
+FROM depositor
+UNION ALL
+SELECT cust_name
+FROM borrower;
+
+6)SELECT cust_name
+FROM depositor
+WHERE cust_name NOT IN (
+  SELECT cust_name
+  FROM borrower
+);
+
+7)SELECT branch_name, AVG(balance) AS avg_balance
+FROM account
+GROUP BY branch_name;
+
+8)SELECT cust_name
+FROM borrower
+JOIN loan ON borrower.loan_no = loan.loan_no
+ORDER BY amount DESC
+LIMIT 1;

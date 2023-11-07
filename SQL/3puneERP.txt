@@ -1,0 +1,103 @@
+﻿CREATE TABLE Dept (
+  Deptno INT NOT NULL AUTO_INCREMENT,
+  Name VARCHAR(255) NOT NULL,
+  Location VARCHAR(255) NOT NULL,
+  Managerempid INT NOT NULL,
+  PRIMARY KEY (Deptno)
+);
+
+CREATE TABLE Employees (
+  Empid INT NOT NULL AUTO_INCREMENT,
+  Name VARCHAR(255) NOT NULL,
+  Address VARCHAR(255) NOT NULL,
+  City VARCHAR(255) NOT NULL,
+  Dob DATE NOT NULL,
+  DateOfJoining DATE NOT NULL,
+  Gender CHAR(1) CHECK (Gender IN ('M', 'F')),
+  Salary DECIMAL(10,2) NOT NULL,
+  Deptno INT NOT NULL,
+  PRIMARY KEY (Empid),
+  FOREIGN KEY (Deptno) REFERENCES Dept(Deptno)
+);
+
+CREATE TABLE Project (
+  Projectid INT NOT NULL AUTO_INCREMENT,
+  Title VARCHAR(255) NOT NULL,
+  City VARCHAR(255) NOT NULL,
+  PRIMARY KEY (Projectid)
+);
+
+CREATE TABLE Works (
+  Empid INT NOT NULL,
+  Projectid INT NOT NULL,
+  TotalHrsWorked INT NOT NULL,
+  FOREIGN KEY (Empid) REFERENCES Employees(Empid),
+  FOREIGN KEY (Projectid) REFERENCES Project(Projectid)
+);
+
+CREATE TABLE Dependant (
+  Empid INT NOT NULL,
+  NameOfDependant VARCHAR(255) NOT NULL,
+  Age INT NOT NULL,
+  Relation VARCHAR(255) NOT NULL,
+  FOREIGN KEY (Empid) REFERENCES Employees(Empid)
+);
+
+INSERT INTO Dept (Name, Location, Managerempid) VALUES
+('Sales', 'Mumbai', 2),
+('Marketing', 'Bangalore', 3),
+('Engineering', 'Pune', 1);
+
+INSERT INTO Employees (Name, Address, City, Dob, DateOfJoining, Gender, Salary, Deptno) VALUES
+('John Doe', '123 Main Street', 'Anytown', '1990-01-01', '2023-08-01', 'M', 100000, 1),
+('Jane Doe', '456 Elm Street', 'Anytown', '1991-02-02', '2023-09-01', 'F', 110000, 2),
+('Peter Parker', '789 Maple Street', 'Anytown', '1992-03-03', '2023-10-01', 'M', 120000, 3);
+
+INSERT INTO Project (Title, City) VALUES
+('ERP Project', 'Pune'),
+('Banking Project', 'Mumbai');
+
+INSERT INTO Works (Empid, Projectid, TotalHrsWorked) VALUES
+(1, 1, 40),
+(2, 2, 30);
+
+INSERT INTO Dependant (Empid, NameOfDependant, Age, Relation) VALUES
+(1, 'Mary Doe', 10, 'Daughter'),
+(2, 'David Doe', 12, 'Son');
+
+1)SELECT Name FROM Employees WHERE Deptno IN (
+  SELECT Deptno FROM Dept WHERE Managerempid IS NOT NULL
+);
+
+2)SELECT Name, DATEDIFF(CURRENT_DATE, Dob) AS Age FROM Employees;
+
+3)SELECT Name
+FROM Employees
+JOIN Works ON Employees.Empid = Works.Empid
+JOIN Project ON Works.Projectid = Project.Projectid
+WHERE Project.Title = 'ERP Project';
+
+4)SELECT Employees.Name, Employees.City
+FROM Employees
+JOIN Works ON Employees.Empid = Works.Empid
+JOIN Project ON Works.Projectid = Project.Projectid
+WHERE Project.Title = 'Banking Project';
+
+5)SELECT * FROM Employees
+WHERE Deptno = 1
+ORDER BY Salary DESC
+LIMIT 1;
+
+6)SELECT * FROM Employees
+LEFT JOIN Works ON Employees.Empid = Works.Empid
+WHERE Works.Projectid IS NULL;
+
+7)CREATE VIEW total_employees_in_pune AS
+SELECT COUNT(*) AS total_employees
+FROM Employees
+JOIN Works ON Employees.Empid = Works.Empid
+JOIN Project ON Works.Projectid = Project.Projectid
+WHERE Project.City = 'Pune';
+
+8)SELECT total_employees * 1000 AS total_traveling_allowance
+FROM total_employees_in_pune;

@@ -1,0 +1,69 @@
+﻿CREATE TABLE Dept (
+  Deptno INT NOT NULL,
+  Name VARCHAR(255) NOT NULL,
+  Location VARCHAR(255) NOT NULL,
+  Managerempid INT NOT NULL,
+  PRIMARY KEY (Deptno)
+);
+
+CREATE TABLE Employees (
+  name VARCHAR(255) NOT NULL,
+  empid INT NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  dob DATE NOT NULL,
+  date_of_joining DATE NOT NULL,
+  gender VARCHAR(1) NOT NULL CHECK (gender IN ('M', 'F')),
+  salary DECIMAL(10,2) NOT NULL,
+  deptno INT NOT NULL,
+  PRIMARY KEY (empid),
+  FOREIGN KEY (deptno) REFERENCES Dept (Deptno)
+);
+
+CREATE TABLE Project (
+  Projectid INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  PRIMARY KEY (Projectid)
+);
+
+CREATE TABLE Works (
+  empid INT NOT NULL,
+  Projectid INT NOT NULL,
+  total_hrs_worked INT NOT NULL,
+  PRIMARY KEY (empid, Projectid),
+  FOREIGN KEY (empid) REFERENCES Employees (empid),
+  FOREIGN KEY (Projectid) REFERENCES Project (Projectid)
+);
+
+CREATE TABLE Dependant (
+  empid INT NOT NULL,
+  name_of_dependant VARCHAR(255) NOT NULL,
+  age INT NOT NULL,
+  relation VARCHAR(255) NOT NULL,
+  PRIMARY KEY (empid, name_of_dependant),
+  FOREIGN KEY (empid) REFERENCES Employees (empid)
+);
+
+1)DELETE FROM Project WHERE title = 'Testing Project';
+2)SELECT * FROM Employees WHERE salary > 50000;
+3)SELECT * FROM Project WHERE city = 'Pune';
+
+4)SELECT name_of_dependant, age, relation FROM Dependant WHERE empid = 102;
+
+5)SELECT Projectid, COUNT(empid) AS num_employees
+FROM Works
+GROUP BY Projectid;
+
+6)SELECT deptno, AVG(salary) AS avg_salary
+FROM Employees
+GROUP BY deptno;
+
+7)SELECT * FROM Employees WHERE deptno = (SELECT Deptno FROM Dept WHERE Name = 'Testing Department') ORDER BY salary DESC LIMIT 1;
+
+8)CREATE VIEW Pune_Employees AS
+SELECT COUNT(*) AS total_employees
+FROM Employees
+JOIN Works ON Employees.empid = Works.empid
+JOIN Project ON Works.Projectid = Project.Projectid
+WHERE Project.city = 'Pune';		

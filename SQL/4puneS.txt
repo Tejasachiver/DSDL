@@ -1,0 +1,102 @@
+﻿CREATE TABLE employees (
+  empid INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  dob DATE NOT NULL,
+  date_of_joining DATE NOT NULL,
+  gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F')),
+  salary DECIMAL(10,2) NOT NULL,
+  deptno INT NOT NULL,
+  PRIMARY KEY (empid),
+  FOREIGN KEY (deptno) REFERENCES dept (deptno)
+);
+
+CREATE TABLE dept (
+  deptno INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  location VARCHAR(255) NOT NULL,
+  managerempid INT NOT NULL,
+  PRIMARY KEY (deptno)
+);
+
+CREATE TABLE project (
+  projectid INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  PRIMARY KEY (projectid)
+);
+
+CREATE TABLE works (
+  empid INT NOT NULL,
+  projectid INT NOT NULL,
+  total_hrs_worked DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (empid, projectid),
+  FOREIGN KEY (empid) REFERENCES employees (empid),
+  FOREIGN KEY (projectid) REFERENCES project (projectid)
+);
+
+CREATE TABLE dependant (
+  empid INT NOT NULL,
+  name_of_dependant VARCHAR(255) NOT NULL,
+  age INT NOT NULL,
+  relation VARCHAR(255) NOT NULL,
+  PRIMARY KEY (empid, name_of_dependant),
+  FOREIGN KEY (empid) REFERENCES employees (empid)
+);
+
+
+-- Insert data into the employees table
+INSERT INTO employees (empid, name, address, city, dob, date_of_joining, gender, salary, deptno, mobile_number)
+VALUES
+  (1, 'Sam Smith', '123 Main Street', 'Anytown', '1990-01-01', '2023-01-01', 'M', 100000, 10, '123-456-7890'),
+  (2, 'Sarah Jones', '456 Elm Street', 'Anytown', '1989-02-02', '2023-02-02', 'F', 90000, 20, '098-765-4321');
+
+-- Insert data into the dept table
+INSERT INTO dept (deptno, name, location, managerempid)
+VALUES
+  (10, 'Engineering', 'Building 1', 1),
+  (20, 'Sales', 'Building 2', 2);
+
+-- Insert data into the project table
+INSERT INTO project (projectid, title, city)
+VALUES
+  (1, 'Banking project', 'Anytown');
+
+-- Insert data into the works table
+INSERT INTO works (empid, projectid, total_hrs_worked)
+VALUES
+  (1, 1, 40),
+  (2, 1, 30);
+
+-- Insert data into the dependant table
+INSERT INTO dependant (empid, name_of_dependant, age, relation)
+VALUES
+  (1, 'John Smith', 10, 'Son'),
+  (2, 'Jane Jones', 8, 'Daughter');
+
+1)UPDATE employees SET mobile_number = '123-456-7890' WHERE name = 'Sam Smith';
+UPDATE employees SET mobile_number = '098-765-4321' WHERE name = 'Sarah Jones';
+
+2)SELECT * FROM employees WHERE name LIKE 'S%';
+
+3)SELECT * FROM dept WHERE location = 'Building 1';
+
+4)SELECT * FROM employees WHERE date_of_joining BETWEEN '2019-01-01' AND '2020-12-31';
+
+5)SELECT employees.name, employees.city FROM employees
+INNER JOIN works ON employees.empid = works.empid
+INNER JOIN project ON works.projectid = project.projectid
+WHERE project.title = 'Banking project';
+
+6)SELECT SUM(total_hrs_worked) AS total_time_required
+FROM works
+INNER JOIN project ON works.projectid = project.projectid
+WHERE project.title = 'Banking project';
+7)SELECT employees.name, employees.city, project.city
+FROM employees
+INNER JOIN works ON employees.empid = works.empid
+INNER JOIN project ON works.projectid = project.projectid
+WHERE employees.city = project.city;
+
+
