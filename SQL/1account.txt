@@ -8,21 +8,19 @@
 CREATE TABLE depositor (
   cust_name VARCHAR(255) NOT NULL,
   acc_no INT NOT NULL,
-  PRIMARY KEY (cust_name, acc_no),
   FOREIGN KEY (acc_no) REFERENCES account(acc_no)
 );
 
 CREATE TABLE loan (
   loan_no INT NOT NULL,
   branch_name VARCHAR(255) NOT NULL,
-  amount DECIMAL(10,2) NOT NULL,
+  amount INT NOT NULL,
   PRIMARY KEY (loan_no)
 );
 
 CREATE TABLE borrower (
   cust_name VARCHAR(255) NOT NULL,
   loan_no INT NOT NULL,
-  PRIMARY KEY (cust_name, loan_no),
   FOREIGN KEY (loan_no) REFERENCES loan(loan_no)
 );
 
