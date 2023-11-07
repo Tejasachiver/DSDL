@@ -41,7 +41,6 @@ CREATE TABLE Dependant (
   name_of_dependant VARCHAR(255) NOT NULL,
   age INT NOT NULL,
   relation VARCHAR(255) NOT NULL,
-  PRIMARY KEY (empid, name_of_dependant),
   FOREIGN KEY (empid) REFERENCES Employees (empid)
 );
 
