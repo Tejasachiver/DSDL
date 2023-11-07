@@ -1,0 +1,86 @@
+-- Create the TE table
+CREATE TABLE TE (
+  Roll NUMBER,
+  Name VARCHAR2(50),
+  Division VARCHAR2(1),
+  Marks NUMBER
+);
+
+-- Create the TEA and TEB tables
+CREATE TABLE TEA (
+  Roll NUMBER,
+  Name VARCHAR2(50),
+  Marks NUMBER
+);
+
+CREATE TABLE TEB (
+  Roll NUMBER,
+  Name VARCHAR2(50),
+  Marks NUMBER
+);
+
+
+-- Insert sample data into the TE table
+INSERT INTO TE (Roll, Name, Division, Marks) VALUES (1, 'Student1', 'A', 85);
+INSERT INTO TE (Roll, Name, Division, Marks) VALUES (2, 'Student2', 'B', 92);
+-- Add more sample data as needed
+
+
+DECLARE
+  v_roll NUMBER;
+  v_name VARCHAR2(50);
+  v_marks NUMBER;
+  v_division VARCHAR2(1);
+  
+  CURSOR te_cursor IS
+    SELECT Roll, Name, Division, Marks FROM TE;
+  
+  TYPE top_students_type IS RECORD (
+    Roll NUMBER,
+    Name VARCHAR2(50),
+    Marks NUMBER
+  );
+  
+  TYPE top_students_table IS TABLE OF top_students_type INDEX BY BINARY_INTEGER;
+  
+  v_top_students_a top_students_table;
+  v_top_students_b top_students_table;
+  
+BEGIN
+  -- Initialize top students arrays
+  v_top_students_a := top_students_table();
+  v_top_students_b := top_students_table();
+
+  -- Loop through TE table and insert students into TEA or TEB
+  FOR te_row IN te_cursor LOOP
+    v_roll := te_row.Roll;
+    v_name := te_row.Name;
+    v_marks := te_row.Marks;
+    v_division := te_row.Division;
+
+    IF v_division = 'A' THEN
+      INSERT INTO TEA (Roll, Name, Marks) VALUES (v_roll, v_name, v_marks);
+    ELSIF v_division = 'B' THEN
+      INSERT INTO TEB (Roll, Name, Marks) VALUES (v_roll, v_name, v_marks);
+    END IF;
+
+    -- Track the top students for each division
+    IF v_division = 'A' THEN
+      v_top_students_a(v_roll) := (v_roll, v_name, v_marks);
+    ELSIF v_division = 'B' THEN
+      v_top_students_b(v_roll) := (v_roll, v_name, v_marks);
+    END IF;
+  END LOOP;
+
+  -- Find and display the top three students for each division
+  DBMS_OUTPUT.PUT_LINE('Top Three Students in Division A:');
+  FOR i IN 1..3 LOOP
+    DBMS_OUTPUT.PUT_LINE('Roll: ' || v_top_students_a(i).Roll || ', Name: ' || v_top_students_a(i).Name || ', Marks: ' || v_top_students_a(i).Marks);
+  END LOOP;
+
+  DBMS_OUTPUT.PUT_LINE('Top Three Students in Division B:');
+  FOR i IN 1..3 LOOP
+    DBMS_OUTPUT.PUT_LINE('Roll: ' || v_top_students_b(i).Roll || ', Name: ' || v_top_students_b(i).Name || ', Marks: ' || v_top_students_b(i).Marks);
+  END LOOP;
+END;
+/
