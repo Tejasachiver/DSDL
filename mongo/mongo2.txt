@@ -1,0 +1,69 @@
+﻿db.createCollection("books")
+db.books.insertMany([
+  {
+    TITLE: "MongoDB for Beginners",
+    DESCRIPTION: "A comprehensive guide to learn MongoDB",
+    BY: "John Doe",
+    URL: "https://www.mongodb.com/learn/mongodb-for-beginners/",
+    TAGS: ["mongodb", "beginners", "database"],
+    LIKES: 100
+  },
+  {
+    TITLE: "MongoDB Cookbook",
+    DESCRIPTION: "A collection of recipes to help you solve common MongoDB problems",
+    BY: "Jane Doe",
+    URL: "https://www.mongodb.com/cookbook",
+    TAGS: ["mongodb", "recipes", "database"],
+    LIKES: 200
+  },
+  {
+    TITLE: "MongoDB in Action",
+    DESCRIPTION: "A hands-on guide to learn MongoDB through real-world examples",
+    BY: "Peter Parker",
+    URL: "https://www.manning.com/books/mongodb-in-action",
+    TAGS: ["mongodb", "database", "development"],
+    LIKES: 300
+  },
+  {
+    TITLE: "MongoDB: The Definitive Guide",
+    DESCRIPTION: "A comprehensive guide to learn MongoDB, covering all the features and concepts in detail",
+    BY: "Kristina Chodorow",
+    URL: "https://www.mongodb.com/books/mongodb-the-definitive-guide",
+    TAGS: ["mongodb", "database", "reference"],
+    LIKES: 400
+  },
+  {
+    TITLE: "MongoDB: Sharding, Replication, and High Availability",
+    DESCRIPTION: "A guide to learn about MongoDB sharding, replication, and high availability",
+    BY: "Martin Kleppmann",
+    URL: "https://www.manning.com/books/mongodb-sharding-replication-and-high-availability",
+    TAGS: ["mongodb", "sharding", "replication", "high availability"],
+    LIKES: 500
+  }
+])
+
+
+db.books.insertOne({
+  TITLE: "MongoDB for Developers",
+  DESCRIPTION: "A guide to learn MongoDB for developers",
+  BY: "John Doe",
+  URL: "https://www.mongodb.com/learn/mongodb-for-developers/",
+  TAGS: ["mongodb", "developers", "database"],
+  LIKES: 600,
+  USERNAME: "Bard",
+  COMMENTS: "This book is great for learning MongoDB. It covers all the basics in a clear and concise way."
+})
+
+1)db.books.find({ TITLE: "MongoDB" })
+2)db.books.find({ $or: [{ BY: "John Doe" }, { TITLE: "MongoDB" }] })
+3)db.books.find({ TITLE: "MongoDB", BY: "John Doe" })
+4)db.books.updateOne({ TITLE: "MongoDB" }, { $set: { TITLE: "MongoDB Overview" } })
+5)db.books.deleteOne({ TITLE: "NoSQL Overview" })
+6)db.books.find({ BY: "John Doe" }).skip(0).limit(2)
+7)db.books.createIndex(
+  { BY: 1 },
+  { unique: false }
+)
+8)db.books.find({ BY: "John Doe" }).hint({ BY: 1 })
+9)db.books.countDocuments({ BY: "John Doe" })
+

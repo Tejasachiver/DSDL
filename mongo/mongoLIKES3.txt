@@ -1,0 +1,69 @@
+﻿db.createCollection("books")
+
+db.books.insertMany([
+  {
+    "TITLE": "MongoDB",
+    "DESCRIPTION": "MongoDB is a NoSQL database",
+    "BY": "John",
+    "URL": "https://www.mongodb.com/",
+    "TAGS": ["nosql", "database", "mongodb"],
+    "LIKES": 100
+  },
+  {
+    "TITLE": "Node.js",
+    "DESCRIPTION": "Node.js is a JavaScript runtime environment",
+    "BY": "John",
+    "URL": "https://nodejs.org/",
+    "TAGS": ["javascript", "runtime", "nodejs"],
+    "LIKES": 95
+  },
+  {
+    "TITLE": "React",
+    "DESCRIPTION": "React is a JavaScript library for building user interfaces",
+    "BY": "John",
+    "URL": "https://reactjs.org/",
+    "TAGS": ["javascript", "react", "ui"],
+    "LIKES": 90
+  },
+  {
+    "TITLE": "Express.js",
+    "DESCRIPTION": "Express.js is a Node.js framework for building web applications",
+    "BY": "John",
+    "URL": "https://expressjs.com/",
+    "TAGS": ["nodejs", "express", "web"],
+    "LIKES": 85
+  },
+  {
+    "TITLE": "NoSQL overview",
+    "DESCRIPTION": "An overview of NoSQL databases",
+    "BY": "Jane",
+    "URL": "https://www.mongodb.com/nosql-databases",
+    "TAGS": ["nosql", "databases"],
+    "LIKES": 80
+  }
+])
+
+db.books.insertOne({
+  "TITLE": "MongoDB",
+  "DESCRIPTION": "MongoDB is a NoSQL database",
+  "BY": "John",
+  "URL": "https://www.mongodb.com/",
+  "TAGS": ["nosql", "database", "mongodb"],
+  "LIKES": 100,
+  "USER_NAME": "Peter",
+  "COMMENTS": "This is a great book on MongoDB!"
+})
+
+1)db.books.find({TITLE: 'mongodb'})
+2)db.books.find({$or: [{BY: 'john'}, {TITLE: 'mongodb'}]})
+3)db.books.find({TITLE: 'mongodb', BY: 'john'})
+4)db.books.find({LIKES: {$gt: 10}})
+5)db.books.find({BY: 'john'}).skip(1).limit(1)
+6)db.books.find().sort({TITLE: 1})
+7)db.books.aggregate([
+  { $match: {BY: 'john'}},
+  { $group: {_id: '$BY', averageLikes: { $avg: '$LIKES'}}}
+])
+8)db.books.find({BY: 'john'}).sort({TITLE: 1}).limit(1)
+db.books.find({BY: 'john'}).sort({TITLE: -1}).limit(1)
+
