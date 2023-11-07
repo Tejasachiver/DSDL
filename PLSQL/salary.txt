@@ -1,0 +1,62 @@
+-- Create the Employee table
+CREATE TABLE Employee (
+  Empid NUMBER,
+  Name VARCHAR2(50),
+  Basic_Salary NUMBER,
+  Type VARCHAR2(20)
+);
+
+-- Create the Salary table to store the results
+CREATE TABLE Salary (
+  Empid NUMBER,
+  Name VARCHAR2(50),
+  Basic_Salary NUMBER,
+  DA NUMBER,
+  HRA NUMBER,
+  Income_Tax NUMBER,
+  Gross_Salary NUMBER,
+  Net_Salary NUMBER
+);
+
+-- PL/SQL block to calculate gross and net salary
+DECLARE
+  v_empid NUMBER;
+  v_name VARCHAR2(50);
+  v_basic_salary NUMBER;
+  v_type VARCHAR2(20);
+  v_da NUMBER;
+  v_hra NUMBER;
+  v_income_tax NUMBER := 2000; -- Fixed income tax amount
+
+BEGIN
+  -- Calculate gross and net salary for each employee
+  FOR emp_record IN (SELECT * FROM Employee) LOOP
+    v_empid := emp_record.Empid;
+    v_name := emp_record.Name;
+    v_basic_salary := emp_record.Basic_Salary;
+    v_type := emp_record.Type;
+
+    -- Calculate DA (115% of Basic Salary)
+    v_da := v_basic_salary * 1.15;
+
+    -- Calculate HRA (12% of Basic Salary, capped at 20000)
+    v_hra := LEAST(v_basic_salary * 0.12, 20000);
+
+    -- Calculate Gross Salary (Basic + DA + HRA)
+    IF v_type = 'Permanent' THEN
+      v_gross_salary := v_basic_salary + v_da + v_hra;
+    ELSE
+      v_gross_salary := v_basic_salary;
+    END IF;
+
+    -- Calculate Net Salary (Gross Salary - Income Tax)
+    v_net_salary := v_gross_salary - v_income_tax;
+
+    -- Insert the result into the Salary table
+    INSERT INTO Salary (Empid, Name, Basic_Salary, DA, HRA, Income_Tax, Gross_Salary, Net_Salary)
+    VALUES (v_empid, v_name, v_basic_salary, v_da, v_hra, v_income_tax, v_gross_salary, v_net_salary);
+  END LOOP;
+
+  COMMIT;
+END;
+/
