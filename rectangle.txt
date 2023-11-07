@@ -1,0 +1,33 @@
+-- Create a table named "areas" to store the results
+CREATE TABLE areas (
+  length NUMBER,
+  breadth NUMBER,
+  area NUMBER,
+  perimeter NUMBER
+);
+
+-- PL/SQL block to calculate and insert values into the "areas" table
+DECLARE
+  l_min NUMBER := 10;   -- Minimum length value
+  l_max NUMBER := 20;   -- Maximum length value
+  b_min NUMBER := 5;    -- Minimum breadth value
+  b_max NUMBER := 10;   -- Maximum breadth value
+  l NUMBER;
+  b NUMBER;
+  a NUMBER;
+  p NUMBER;
+BEGIN
+  FOR l IN l_min..l_max LOOP
+    FOR b IN b_min..b_max LOOP
+      -- Calculate area and perimeter for each combination of length and breadth
+      a := l * b;
+      p := 2 * (l + b);
+
+      -- Insert the values into the "areas" table
+      INSERT INTO areas (length, breadth, area, perimeter)
+      VALUES (l, b, a, p);
+    END LOOP;
+  END LOOP;
+  COMMIT;
+END;
+/
